@@ -538,12 +538,12 @@ const Oracle = {
   idleTimer: null,
   idleShowing: false,
   wandererTimer: null,
-  IDLE_MS: 8000,
+  IDLE_MS: 10000,
 
   init() {
     this._bindEvents();
     this._initStars();
-    this._startIdleTimer();
+    this._startIdleTimer(13000); // prima volta: 13 secondi di grazia
   },
 
   _bindEvents() {
@@ -556,35 +556,36 @@ const Oracle = {
       const n = ta.value.length;
       cc.textContent = n + ' / 220';
       cc.classList.toggle('warn', n > 180);
-      this._resetIdleTimer();
     });
     ta.addEventListener('keydown', e => {
       if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); this._consult(); }
-      this._resetIdleTimer();
     });
 
-    // Qualsiasi interazione resetta il timer idle
-    ['mousemove', 'mousedown', 'touchstart', 'scroll'].forEach(ev => {
-      document.addEventListener(ev, () => this._resetIdleTimer(), { passive: true });
+    // Reset idle SOLO su: click su qualsiasi bottone, o digitazione di qualsiasi carattere
+    document.addEventListener('click', e => {
+      if (e.target.closest('button')) this._resetIdleTimer();
+    });
+    document.addEventListener('keydown', e => {
+      if (e.key.length === 1) this._resetIdleTimer(); // lettere, numeri, punteggiatura
     });
 
     // Chiudi idle popup
     document.getElementById('idleClose').addEventListener('click', () => this._closeIdle());
   },
 
-  _startIdleTimer() {
+  _startIdleTimer(ms) {
     clearTimeout(this.idleTimer);
     if (!this.running) {
-      this.idleTimer = setTimeout(() => this._triggerIdle(), this.IDLE_MS);
+      this.idleTimer = setTimeout(() => this._triggerIdle(), ms ?? this.IDLE_MS);
     }
   },
 
   _resetIdleTimer() {
+    if (this.running) return;
     if (this.idleShowing) return;
+    if (document.getElementById('insultOverlay').classList.contains('active')) return;
     clearTimeout(this.idleTimer);
-    if (!this.running && !this.idleShowing) {
-      this.idleTimer = setTimeout(() => this._triggerIdle(), this.IDLE_MS);
-    }
+    this.idleTimer = setTimeout(() => this._triggerIdle(), this.IDLE_MS);
   },
 
   _triggerIdle() {
