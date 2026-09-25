@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Scuse del Gatto</title>
+  <meta name="description" content="Il generatore di scuse geniali a tema felino. Per ogni occasione.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Pacifico&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <div class="bg-layer" id="bgLayer"></div>
+  <div class="bg-cats" id="bgCats"></div>
+
+  <main class="container">
+
+    <header class="hero">
+      <span class="hero-paw">&#x1F43E;</span>
+      <h1 class="title">Scuse del Gatto</h1>
+      <p class="subtitle">Perche' ogni umano ha bisogno di un felino come alibi</p>
+    </header>
+
+    <section class="cat-hero">
+      <div class="speech-bubble" id="speechBubble">
+        <span id="speechText">Premi il bottone, umano. Ho poco tempo.</span>
+      </div>
+      <div class="cat-figure">
+        <div class="cat-emoji" id="catEmoji">&#x1F638;</div>
+        <div class="cat-shadow"></div>
+      </div>
+    </section>
+
+    <div class="categories-scroll">
+      <div class="categories">
+        <button class="cat-filter active" data-cat="all">&#x1F43E; Tutte</button>
+        <button class="cat-filter" data-cat="ritardo">&#x23F0; Ritardo</button>
+        <button class="cat-filter" data-cat="telefono">&#x1F4F1; Irreperibile</button>
+        <button class="cat-filter" data-cat="uscita">&#x1F37A; Uscita</button>
+        <button class="cat-filter" data-cat="dimenticato">&#x1F914; Ho dimenticato</button>
+        <button class="cat-filter" data-cat="casa">&#x1F3E0; Tardi a casa</button>
+        <button class="cat-filter" data-cat="varie">&#x2728; Varie</button>
+      </div>
+    </div>
+
+    <button class="generate-btn" id="generateBtn">
+      <span class="btn-paw">&#x1F43E;</span>
+      <span class="btn-label">Genera Scusa</span>
+      <div class="btn-ripple" id="btnRipple"></div>
+    </button>
+
+    <div class="excuse-card" id="excuseCard">
+      <div class="card-inner">
+        <div class="card-header">
+          <span class="excuse-badge" id="excuseBadge">&#8212; categoria &#8212;</span>
+          <div class="cred-row">
+            <span class="cred-label">Credibilita'</span>
+            <span class="cred-stars" id="credStars">&#9734;&#9734;&#9734;&#9734;&#9734;</span>
+          </div>
+        </div>
+        <p class="excuse-text" id="excuseText">Clicca "Genera Scusa" per trovare la scusa perfetta...</p>
+        <p class="cat-reaction" id="catReaction"></p>
+        <div class="card-actions">
+          <button class="action-btn copy-btn" id="copyBtn">&#x1F4CB; Copia</button>
+          <button class="action-btn wa-btn" id="waBtn">&#x1F4AC; WhatsApp</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="cat-photo-section" id="catPhotoSection">
+      <div class="cat-photo-frame">
+        <div class="cat-photo-loading" id="catPhotoLoading">&#x1F431;</div>
+        <img class="cat-photo" id="catPhoto" src="" alt="Gatto giudice" />
+        <p class="cat-photo-caption">Il giudice supremo valuta la tua scusa</p>
+      </div>
+    </div>
+
+    <div class="cat-fact-card">
+      <span class="fact-icon">&#x1F4A1;</span>
+      <div>
+        <p class="fact-label">Fatto Felino del Momento</p>
+        <p class="fact-text" id="catFactText">Caricamento saggezza felina...</p>
+      </div>
+    </div>
+
+    <footer class="footer">
+      <p>Fatto con &#x1F43E; e zero vergogna &#8212; usare responsabilmente</p>
+    </footer>
+
+  </main>
+
+  <div class="toast" id="toast"></div>
+
+  <script src="script.js"></script>
+</body>
+</html>
