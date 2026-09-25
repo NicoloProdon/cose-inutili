@@ -537,6 +537,7 @@ const Oracle = {
   timer: null,
   idleTimer: null,
   idleShowing: false,
+  idleClip: null,
   wandererTimer: null,
   IDLE_MS: 10000,
 
@@ -612,13 +613,16 @@ const Oracle = {
       el.style.animation = '';
     });
 
-    try { SoundEngine.sounds.noia(); } catch (e) { /* audio non disponibile */ }
+    this.idleClip = new Audio('audio/AudioCleaner.mp3');
+    this.idleClip.volume = 0.9;
+    this.idleClip.play().catch(() => {});
 
     overlay.classList.add('active');
     this._startWanderer();
   },
 
   _closeIdle() {
+    if (this.idleClip) { this.idleClip.pause(); this.idleClip = null; }
     document.getElementById('idleOverlay').classList.remove('active');
     this.idleShowing = false;
     this._stopWanderer();
@@ -746,9 +750,6 @@ const Oracle = {
       void el.offsetWidth;
       el.style.animation = '';
     });
-
-    // Suono breve di avviso
-    try { SoundEngine.sounds.offesa(); } catch (e) { /* audio non disponibile */ }
 
     // Clip audio Vannacci (già tagliato) — play() sincrono dentro il gesture handler
     const clip = new Audio('audio/AudioCleaner.mp3');
