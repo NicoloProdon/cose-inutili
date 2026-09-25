@@ -750,35 +750,13 @@ const Oracle = {
     // Suono breve di avviso
     try { SoundEngine.sounds.offesa(); } catch (e) { /* audio non disponibile */ }
 
-    // Clip audio Vannacci: secondi 17-21
-    const clip = new Audio();
-    clip.preload = 'auto';
-    clip.volume  = 0.9;
-    let clipTimer = null;
+    // Clip audio Vannacci (già tagliato, si riproduce dall'inizio)
+    const clip = new Audio('audio/AudioCleaner.mp3');
+    clip.volume = 0.9;
     let clipAborted = false;
 
-    const playFromSecond17 = () => {
-      if (clipAborted) return;
-      clip.currentTime = 17;
-      // dopo il seek parte davvero
-      clip.addEventListener('seeked', function onSeeked() {
-        clip.removeEventListener('seeked', onSeeked);
-        if (!clipAborted) {
-          clip.play().catch(() => {});
-          clipTimer = setTimeout(() => { clip.pause(); }, 4000); // 17→21
-        }
-      }, { once: true });
-    };
-
-    // Avvia il caricamento solo quando il buzzer è finito (~350 ms)
     setTimeout(() => {
-      if (clip.readyState >= 1) { // metadati già disponibili (cache)
-        playFromSecond17();
-      } else {
-        clip.addEventListener('loadedmetadata', playFromSecond17, { once: true });
-      }
-      clip.src = 'audio/AudioCleaner_Download_Vannacci_%20%C2%ABGonna%20corta%20o%20gonna%20lunga_%20Una%20donna%20la%20preferisco%20sempre%20senza%20gonna%C2%BB.mp3';
-      clip.load();
+      if (!clipAborted) clip.play().catch(() => {});
     }, 350);
 
     overlay.classList.add('active');
@@ -786,7 +764,6 @@ const Oracle = {
     const close = () => {
       clipAborted = true;
       clip.pause();
-      clearTimeout(clipTimer);
       overlay.classList.remove('active');
       closeBtn.removeEventListener('click', close);
       callback();
