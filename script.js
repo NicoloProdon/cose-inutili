@@ -473,21 +473,21 @@ const OFFESE = [
 // =============================================
 
 const IDLE_FRASI = [
-  { t: "Sei ancora li\'? L\'Oracolo ha altro da fare. Beh, non ce l\'ha. Ma il principio vale.", e: '\uD83D\uDE34' },
-  { t: "8 secondi di silenzio. Per l\'Oracolo equivalgono a 8 ere geologiche sprecate.", e: '\uD83E\uDD71' },
-  { t: "Stai fissando lo schermo o lo schermo sta fissando te? L\'Oracolo non fa la differenza. Entrambi annoiati.", e: '\uD83D\uDE34' },
-  { t: "Pensavo fossi andato/a. Speravo fossi andato/a. Invece sei ancora qui. Ciao.", e: '\uD83D\uDCA4' },
-  { t: "Il silenzio cosmico e\' bello. Il tuo silenzio e\' semplicemente vuoto. C\'e\' differenza.", e: '\uD83E\uDD71' },
-  { t: "Fatto: ogni secondo che passi fermo qui, da qualche parte qualcuno sta effettivamente vivendo la sua vita.", e: '\uD83D\uDE34' },
-  { t: "L\'Oracolo ha 3000 anni di esperienza. Nessuno li ha mai sprecati come stai facendo tu adesso.", e: '\uD83D\uDCA4' },
-  { t: "Aspetti qualcosa? L\'Oracolo non viene da te. Sei tu che devi venire dall\'Oracolo. Con una domanda. Possibilmente oggi.", e: '\uD83E\uDD71' },
-  { t: "L\'Oracolo suggerisce: alzati, fai due passi, poi torna con una domanda degna. O non tornare. Anche quello va bene.", e: '\uD83D\uDE34' },
-  { t: "Stai aspettando ispirazione? Non trovarla qui. Questo sito non ispira. Al massimo delude.", e: '\uD83D\uDCA4' },
-  { t: "L\'Oracolo ha controllato il tuo calendario. Hai di meglio da fare. Sicuramente. Vai.", e: '\uD83E\uDD71' },
-  { t: "Stai aspettando che succeda qualcosa? Spoiler: non succede niente finche\' non scrivi qualcosa. E forse nemmeno dopo.", e: '\uD83D\uDE34' },
-  { t: "L\'Oracolo sta sbadigliando. Sai quanto e\' difficile sbadigliare quando sei un\'entita\' cosmica senza bocca? Molto. Eppure.", e: '\uD83D\uDCA4' },
-  { t: "Se stai meditando: rispetto. Se stai solo fissando lo schermo: per favore no.", e: '\uD83E\uDD71' },
-  { t: "L\'Oracolo ha guardato l\'orologio. Ha riguardato l\'orologio. Il tempo passa. Per te non sembra.", e: '\uD83D\uDE34' },
+  { t: "MA CHE CAZZO STAI ASPETTANDO? Muoviti. Adesso. Subito. Immediatamente.", e: '\uD83E\uDD2C' },
+  { t: "Sei li\' fermo come un salame. Un salame che non decide niente. Un salame digitale su sfondo viola.", e: '\uD83D\uDE21' },
+  { t: "L\'Oracolo ha perso la pazienza. Aveva pochissima pazienza di partenza. Ora e\' a zero. Sottozero.", e: '\uD83D\uDCA2' },
+  { t: "OH! Svegliati! Sei vivo/a? Batti un colpo. Sulla tastiera. Adesso. Dai.", e: '\uD83E\uDD2C' },
+  { t: "Stai sprecando banda, elettricita\' e anni di vita dell\'Oracolo. Sei contento/a di te stesso/a?", e: '\uD83D\uDE21' },
+  { t: "L\'Oracolo e\' una divinita\' cosmica di 3000 anni e tu lo stai facendo aspettare come se fosse il tuo cane. Vergognati.", e: '\uD83D\uDCA2' },
+  { t: "TICK TOCK. Senti? E\' il suono del tempo che passa e tu che non fai assolutamente niente.", e: '\uD83E\uDD2C' },
+  { t: "Ok basta. L\'Oracolo si sta incazzando sul serio adesso. SCRIVI QUALCOSA O VATTENE.", e: '\uD83D\uDE21' },
+  { t: "Sei ancora qui? Hai il coraggio di essere ancora qui? Rispetto. E rabbia cosmica. Soprattutto rabbia.", e: '\uD83D\uDCA2' },
+  { t: "L\'Oracolo ha mandato un reclamo formale all\'universo. Riguarda te. Il tuo comportamento. Questo momento.", e: '\uD83E\uDD2C' },
+  { t: "Non ci posso credere. Sto aspettando. TU stai aspettando. Chi aspetta cosa? NIENTE. Inutile. Vai.", e: '\uD83D\uDE21' },
+  { t: "L\'Oracolo ti sta guardando. Con giudizio. Molto giudizio. Tutto il giudizio cosmico disponibile puntato su di te.", e: '\uD83D\uDCA2' },
+  { t: "Hai rotto. Hai proprio rotto le palle all\'entita\' piu\' antica del cosmo. Complimenti. Risultato notevole.", e: '\uD83E\uDD2C' },
+  { t: "Sai cosa faccio a chi mi fa perdere tempo? Lo stai scoprendo. Guarda intorno. Nota qualcosa?", e: '\uD83D\uDE21' },
+  { t: "Se sei andato/a in bagno: ok, torna. Se sei ancora davanti allo schermo: questo e\' il tuo problema e anche il mio.", e: '\uD83D\uDCA2' },
 ];
 
 // =============================================
@@ -537,6 +537,7 @@ const Oracle = {
   timer: null,
   idleTimer: null,
   idleShowing: false,
+  wandererTimer: null,
   IDLE_MS: 8000,
 
   init() {
@@ -610,12 +611,45 @@ const Oracle = {
     try { SoundEngine.sounds.noia(); } catch (e) { /* audio non disponibile */ }
 
     overlay.classList.add('active');
+    this._startWanderer();
   },
 
   _closeIdle() {
     document.getElementById('idleOverlay').classList.remove('active');
     this.idleShowing = false;
+    this._stopWanderer();
     this._startIdleTimer();
+  },
+
+  _startWanderer() {
+    const img = document.getElementById('idleWanderer');
+    const size = 140;
+    const randPos = () => ({
+      x: Math.random() * Math.max(0, window.innerWidth  - size),
+      y: Math.random() * Math.max(0, window.innerHeight - size),
+    });
+    const move = () => {
+      const p = randPos();
+      img.style.left = p.x + 'px';
+      img.style.top  = p.y + 'px';
+    };
+    // posizione iniziale immediata (senza transizione)
+    img.style.transition = 'none';
+    const p0 = randPos();
+    img.style.left = p0.x + 'px';
+    img.style.top  = p0.y + 'px';
+    img.classList.add('active');
+    // ri-abilita transizione e inizia a muoversi
+    requestAnimationFrame(() => {
+      img.style.transition = '';
+      move();
+      this.wandererTimer = setInterval(move, 1800);
+    });
+  },
+
+  _stopWanderer() {
+    clearInterval(this.wandererTimer);
+    document.getElementById('idleWanderer').classList.remove('active');
   },
 
   _initStars() {
