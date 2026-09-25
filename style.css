@@ -17,9 +17,9 @@
   --gold-light:      #ffe980;
   --gold-dim:        #a08a00;
   --crystal-blue:    #7ecfff;
-  --text-primary:    #f0e8ff;
-  --text-secondary:  #b39ddb;
-  --text-dim:        #6b5b8a;
+  --text-primary:    #f5eeff;
+  --text-secondary:  #d8c4ff;
+  --text-dim:        #b89ee0;
   --red-accent:      #ff4466;
 }
 
@@ -96,13 +96,21 @@ html, body {
   color: var(--text-secondary);
   letter-spacing: 0.08em;
   font-style: italic;
+  text-shadow: 0 0 12px rgba(180, 140, 255, 0.45);
 }
 
 .tagline {
-  font-size: clamp(0.92rem, 2vw, 0.95rem);
-  color: var(--text-dim);
+  font-size: clamp(0.92rem, 2vw, 0.98rem);
+  color: #f0d888;
   font-style: italic;
   margin-top: 0.2rem;
+  text-shadow: 0 0 10px rgba(255, 210, 80, 0.5), 0 0 22px rgba(255, 180, 40, 0.25);
+  animation: taglineShimmer 4s ease-in-out infinite;
+}
+
+@keyframes taglineShimmer {
+  0%, 100% { opacity: 0.85; text-shadow: 0 0 10px rgba(255,210,80,0.5), 0 0 22px rgba(255,180,40,0.25); }
+  50%       { opacity: 1;    text-shadow: 0 0 16px rgba(255,220,100,0.8), 0 0 36px rgba(255,200,60,0.4); }
 }
 
 /* =============================================
@@ -208,12 +216,13 @@ html, body {
 
 .crystal-caption {
   font-size: clamp(0.95rem, 2.5vw, 1rem);
-  color: var(--text-dim);
+  color: var(--text-secondary);
   font-style: italic;
   text-align: center;
-  transition: color 0.4s;
+  transition: color 0.4s, text-shadow 0.4s;
   min-height: 1.4em;
   padding: 0 1rem;
+  text-shadow: 0 0 10px rgba(180, 140, 255, 0.4);
 }
 
 .crystal-inner.active {
@@ -412,6 +421,7 @@ textarea::placeholder {
   color: var(--text-secondary);
   font-style: italic;
   margin-bottom: 1.2rem;
+  text-shadow: 0 0 8px rgba(180, 140, 255, 0.4);
   animation: consultingBlink 1.2s ease-in-out infinite;
 }
 
@@ -746,6 +756,89 @@ textarea::placeholder {
 @keyframes insultPop {
   from { opacity: 0; transform: scale(0.65) rotate(-4deg); }
   to   { opacity: 1; transform: scale(1)    rotate(0deg); }
+}
+
+/* =============================================
+   IDLE POPUP (oracolo annoiato)
+   ============================================= */
+.idle-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.82);
+  z-index: 9998;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+}
+
+.idle-overlay.active { display: flex; }
+
+.idle-modal {
+  background: linear-gradient(145deg, #0a0a1a, #121228);
+  border: 2px solid #5566ff;
+  border-radius: 22px;
+  padding: 2.5rem 2rem;
+  max-width: 480px;
+  width: 100%;
+  text-align: center;
+  box-shadow:
+    0 0 40px rgba(80, 100, 255, 0.4),
+    0 0 80px rgba(80, 100, 255, 0.15),
+    inset 0 1px 0 rgba(120, 140, 255, 0.12);
+  animation: idlePop 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.idle-emoji {
+  font-size: clamp(3rem, 10vw, 4.5rem);
+  line-height: 1;
+  margin-bottom: 1rem;
+  display: block;
+  animation: idleYawn 1.2s ease-in-out;
+}
+
+.idle-text {
+  font-family: 'Crimson Text', Georgia, serif;
+  font-size: clamp(1.1rem, 3.5vw, 1.3rem);
+  line-height: 1.75;
+  color: #aab4ff;
+  margin-bottom: 2rem;
+  font-style: italic;
+  text-shadow: 0 0 8px rgba(100, 120, 255, 0.3);
+}
+
+.idle-close {
+  background: rgba(80, 100, 255, 0.1);
+  border: 1px solid rgba(80, 100, 255, 0.45);
+  border-radius: 30px;
+  color: #aab4ff;
+  font-family: 'Crimson Text', Georgia, serif;
+  font-size: clamp(0.95rem, 2.5vw, 1.05rem);
+  padding: 0.7rem 2rem;
+  cursor: pointer;
+  transition: background 0.2s, border-color 0.2s, color 0.2s;
+  width: 100%;
+  max-width: 300px;
+}
+
+.idle-close:hover {
+  background: rgba(80, 100, 255, 0.25);
+  border-color: #5566ff;
+  color: #fff;
+}
+
+@keyframes idlePop {
+  from { opacity: 0; transform: scale(0.8) translateY(30px); }
+  to   { opacity: 1; transform: scale(1)   translateY(0); }
+}
+
+@keyframes idleYawn {
+  0%   { transform: scale(1) rotate(0deg); }
+  20%  { transform: scale(1.15) rotate(-5deg); }
+  40%  { transform: scale(0.95) rotate(3deg); }
+  60%  { transform: scale(1.08) rotate(-2deg); }
+  80%  { transform: scale(0.98) rotate(1deg); }
+  100% { transform: scale(1) rotate(0deg); }
 }
 
 @keyframes insultShake {

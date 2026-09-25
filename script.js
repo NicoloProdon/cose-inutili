@@ -174,6 +174,25 @@ const SoundEngine = {
       s._osc(1050,'sine', t + 0.79, 0.4, 0.1);
     },
 
+    // Sbadiglio annoiato: discesa lenta + soffio
+    noia() {
+      const s = SoundEngine; s.init(); const t = s.ctx.currentTime;
+      const osc  = s.ctx.createOscillator();
+      const gain = s.ctx.createGain();
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(320, t);
+      osc.frequency.linearRampToValueAtTime(140, t + 1.8);
+      osc.frequency.linearRampToValueAtTime(180, t + 2.4);
+      osc.frequency.linearRampToValueAtTime(110, t + 3.2);
+      gain.gain.setValueAtTime(0, t);
+      gain.gain.linearRampToValueAtTime(0.18, t + 0.2);
+      gain.gain.setValueAtTime(0.18, t + 2.8);
+      gain.gain.exponentialRampToValueAtTime(0.0001, t + 3.5);
+      osc.connect(gain); gain.connect(s.ctx.destination);
+      osc.start(t); osc.stop(t + 3.6);
+      s._noise(t + 0.1, 3, 0.04, 600, 0.3);
+    },
+
     // Buzzer incazzato: sirena alternata 880/440 Hz
     offesa() {
       const s = SoundEngine; s.init(); const t = s.ctx.currentTime;
@@ -450,6 +469,28 @@ const OFFESE = [
 ];
 
 // =============================================
+// FRASI IDLE — oracolo che si annoia
+// =============================================
+
+const IDLE_FRASI = [
+  { t: "Sei ancora li\'? L\'Oracolo ha altro da fare. Beh, non ce l\'ha. Ma il principio vale.", e: '\uD83D\uDE34' },
+  { t: "8 secondi di silenzio. Per l\'Oracolo equivalgono a 8 ere geologiche sprecate.", e: '\uD83E\uDD71' },
+  { t: "Stai fissando lo schermo o lo schermo sta fissando te? L\'Oracolo non fa la differenza. Entrambi annoiati.", e: '\uD83D\uDE34' },
+  { t: "Pensavo fossi andato/a. Speravo fossi andato/a. Invece sei ancora qui. Ciao.", e: '\uD83D\uDCA4' },
+  { t: "Il silenzio cosmico e\' bello. Il tuo silenzio e\' semplicemente vuoto. C\'e\' differenza.", e: '\uD83E\uDD71' },
+  { t: "Fatto: ogni secondo che passi fermo qui, da qualche parte qualcuno sta effettivamente vivendo la sua vita.", e: '\uD83D\uDE34' },
+  { t: "L\'Oracolo ha 3000 anni di esperienza. Nessuno li ha mai sprecati come stai facendo tu adesso.", e: '\uD83D\uDCA4' },
+  { t: "Aspetti qualcosa? L\'Oracolo non viene da te. Sei tu che devi venire dall\'Oracolo. Con una domanda. Possibilmente oggi.", e: '\uD83E\uDD71' },
+  { t: "L\'Oracolo suggerisce: alzati, fai due passi, poi torna con una domanda degna. O non tornare. Anche quello va bene.", e: '\uD83D\uDE34' },
+  { t: "Stai aspettando ispirazione? Non trovarla qui. Questo sito non ispira. Al massimo delude.", e: '\uD83D\uDCA4' },
+  { t: "L\'Oracolo ha controllato il tuo calendario. Hai di meglio da fare. Sicuramente. Vai.", e: '\uD83E\uDD71' },
+  { t: "Stai aspettando che succeda qualcosa? Spoiler: non succede niente finche\' non scrivi qualcosa. E forse nemmeno dopo.", e: '\uD83D\uDE34' },
+  { t: "L\'Oracolo sta sbadigliando. Sai quanto e\' difficile sbadigliare quando sei un\'entita\' cosmica senza bocca? Molto. Eppure.", e: '\uD83D\uDCA4' },
+  { t: "Se stai meditando: rispetto. Se stai solo fissando lo schermo: per favore no.", e: '\uD83E\uDD71' },
+  { t: "L\'Oracolo ha guardato l\'orologio. Ha riguardato l\'orologio. Il tempo passa. Per te non sembra.", e: '\uD83D\uDE34' },
+];
+
+// =============================================
 // INSULTER — logica frequenza offese
 // =============================================
 
@@ -494,10 +535,14 @@ const Insulter = {
 const Oracle = {
   running: false,
   timer: null,
+  idleTimer: null,
+  idleShowing: false,
+  IDLE_MS: 8000,
 
   init() {
     this._bindEvents();
     this._initStars();
+    this._startIdleTimer();
   },
 
   _bindEvents() {
@@ -510,10 +555,67 @@ const Oracle = {
       const n = ta.value.length;
       cc.textContent = n + ' / 220';
       cc.classList.toggle('warn', n > 180);
+      this._resetIdleTimer();
     });
     ta.addEventListener('keydown', e => {
       if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); this._consult(); }
+      this._resetIdleTimer();
     });
+
+    // Qualsiasi interazione resetta il timer idle
+    ['mousemove', 'mousedown', 'touchstart', 'scroll'].forEach(ev => {
+      document.addEventListener(ev, () => this._resetIdleTimer(), { passive: true });
+    });
+
+    // Chiudi idle popup
+    document.getElementById('idleClose').addEventListener('click', () => this._closeIdle());
+  },
+
+  _startIdleTimer() {
+    this.idleTimer = setTimeout(() => this._triggerIdle(), this.IDLE_MS);
+  },
+
+  _resetIdleTimer() {
+    if (this.idleShowing) return;
+    clearTimeout(this.idleTimer);
+    if (!this.running && !this.idleShowing) {
+      this.idleTimer = setTimeout(() => this._triggerIdle(), this.IDLE_MS);
+    }
+  },
+
+  _triggerIdle() {
+    // Non mostrare se: elaborazione in corso, offesa aperta, idle gia\' aperto
+    if (this.running) return;
+    if (document.getElementById('insultOverlay').classList.contains('active')) return;
+    if (this.idleShowing) return;
+
+    this.idleShowing = true;
+    clearTimeout(this.idleTimer);
+
+    const overlay  = document.getElementById('idleOverlay');
+    const modal    = document.getElementById('idleModal');
+    const textEl   = document.getElementById('idleText');
+    const emojiEl  = document.getElementById('idleEmoji');
+
+    const frase = IDLE_FRASI[Math.floor(Math.random() * IDLE_FRASI.length)];
+    textEl.textContent  = frase.t;
+    emojiEl.textContent = frase.e;
+
+    [modal, emojiEl].forEach(el => {
+      el.style.animation = 'none';
+      void el.offsetWidth;
+      el.style.animation = '';
+    });
+
+    try { SoundEngine.sounds.noia(); } catch (e) { /* audio non disponibile */ }
+
+    overlay.classList.add('active');
+  },
+
+  _closeIdle() {
+    document.getElementById('idleOverlay').classList.remove('active');
+    this.idleShowing = false;
+    this._startIdleTimer();
   },
 
   _initStars() {
@@ -561,6 +663,7 @@ const Oracle = {
     }
 
     this.running = true;
+    clearTimeout(this.idleTimer); // stop idle mentre elabora
     const chosen = RISPOSTE[Math.floor(Math.random() * RISPOSTE.length)];
 
     Insulter.record();
@@ -715,6 +818,7 @@ const Oracle = {
         cursor.classList.add('hidden');
         this.running = false;
         document.getElementById('oracleBtn').disabled = false;
+        this._startIdleTimer(); // riprende idle dopo fine stampa
       }
     };
     setTimeout(type, 200);
@@ -738,6 +842,7 @@ const Oracle = {
     document.getElementById('charCount').textContent = '0 / 220';
 
     document.querySelector('.question-section').scrollIntoView({ behavior: 'smooth', block: 'center' });
+    this._startIdleTimer();
   },
 };
 
