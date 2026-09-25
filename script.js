@@ -750,14 +750,11 @@ const Oracle = {
     // Suono breve di avviso
     try { SoundEngine.sounds.offesa(); } catch (e) { /* audio non disponibile */ }
 
-    // Clip audio Vannacci (già tagliato, si riproduce dall'inizio)
+    // Clip audio Vannacci (già tagliato) — play() sincrono dentro il gesture handler
     const clip = new Audio('audio/AudioCleaner.mp3');
     clip.volume = 0.9;
+    clip.play().catch(() => {});
     let clipAborted = false;
-
-    setTimeout(() => {
-      if (!clipAborted) clip.play().catch(() => {});
-    }, 350);
 
     overlay.classList.add('active');
 
