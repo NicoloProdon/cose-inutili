@@ -3,94 +3,99 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Scuse del Gatto</title>
-  <meta name="description" content="Il generatore di scuse geniali a tema felino. Per ogni occasione.">
+  <title>L'Oracolo degli Indecisi</title>
+  <meta name="description" content="Da 3000 anni rispondo. Da 3000 anni non aiuto nessuno.">
   <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=Pacifico&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700;900&family=Crimson+Text:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-  <div class="bg-layer" id="bgLayer"></div>
-  <div class="bg-cats" id="bgCats"></div>
+  <canvas id="starsCanvas"></canvas>
 
-  <main class="container">
+  <div class="container">
 
-    <header class="hero">
-      <span class="hero-paw">&#x1F43E;</span>
-      <h1 class="title">Scuse del Gatto</h1>
-      <p class="subtitle">Perche' ogni umano ha bisogno di un felino come alibi</p>
+    <header class="header">
+      <div class="header-ornament">&#10022; &#10022; &#10022;</div>
+      <h1 class="title">L'Oracolo degli Indecisi</h1>
+      <p class="subtitle">degli Indecisi Cronici</p>
+      <p class="tagline">Da 3000 anni rispondo. Da 3000 anni non aiuto nessuno.</p>
+      <div class="header-ornament">&#10022; &#10022; &#10022;</div>
     </header>
 
-    <section class="cat-hero">
-      <div class="speech-bubble" id="speechBubble">
-        <span id="speechText">Premi il bottone, umano. Ho poco tempo.</span>
+    <section class="crystal-section">
+      <div class="crystal-ball" id="crystalBall">
+        <div class="crystal-inner" id="crystalInner">
+          <div class="crystal-shimmer"></div>
+          <div class="crystal-glow-ring"></div>
+          <img class="crystal-eye" id="crystalEye" src="images/ChatGPT Image 25 set 2026, 17_08_06.png" alt="L'Oracolo">
+        </div>
+        <div class="crystal-base">
+          <div class="crystal-base-inner"></div>
+        </div>
       </div>
-      <div class="cat-figure">
-        <div class="cat-emoji" id="catEmoji">&#x1F638;</div>
-        <div class="cat-shadow"></div>
-      </div>
+      <p class="crystal-caption" id="crystalCaption">Poni il tuo quesito, o anima confusa</p>
     </section>
 
-    <div class="categories-scroll">
-      <div class="categories">
-        <button class="cat-filter active" data-cat="all">&#x1F43E; Tutte</button>
-        <button class="cat-filter" data-cat="ritardo">&#x23F0; Ritardo</button>
-        <button class="cat-filter" data-cat="telefono">&#x1F4F1; Irreperibile</button>
-        <button class="cat-filter" data-cat="uscita">&#x1F37A; Uscita</button>
-        <button class="cat-filter" data-cat="dimenticato">&#x1F914; Ho dimenticato</button>
-        <button class="cat-filter" data-cat="casa">&#x1F3E0; Tardi a casa</button>
-        <button class="cat-filter" data-cat="varie">&#x2728; Varie</button>
+    <section class="question-section">
+      <div class="scroll-wrapper">
+        <div class="scroll-top-deco">&#12316; &#10022; &#12316;</div>
+        <textarea
+          id="questionInput"
+          placeholder="Scrivi qui il tuo dilemma amletico... pizza o sushi? amore o carriera? dormire o esistere?"
+          maxlength="220"
+          rows="3"
+          spellcheck="false"
+        ></textarea>
+        <div class="char-count" id="charCount">0 / 220</div>
+        <div class="scroll-bottom-deco">&#12316; &#10022; &#12316;</div>
       </div>
-    </div>
+      <button id="oracleBtn" class="oracle-btn">
+        <span class="btn-lightning">&#9889;</span>
+        <span class="btn-text">CONSULTA L'ORACOLO</span>
+        <span class="btn-lightning">&#9889;</span>
+      </button>
+    </section>
 
-    <button class="generate-btn" id="generateBtn">
-      <span class="btn-paw">&#x1F43E;</span>
-      <span class="btn-label">Genera Scusa</span>
-      <div class="btn-ripple" id="btnRipple"></div>
-    </button>
+    <section class="oracle-output" id="oracleOutput">
 
-    <div class="excuse-card" id="excuseCard">
-      <div class="card-inner">
-        <div class="card-header">
-          <span class="excuse-badge" id="excuseBadge">&#8212; categoria &#8212;</span>
-          <div class="cred-row">
-            <span class="cred-label">Credibilita'</span>
-            <span class="cred-stars" id="credStars">&#9734;&#9734;&#9734;&#9734;&#9734;</span>
-          </div>
+      <div class="slot-machine" id="slotMachine">
+        <p class="slot-consulting" id="slotConsulting">L'Oracolo sta consultando le forze cosmiche...</p>
+        <div class="slot-reel" id="slotReel">
+          <span id="slotText"></span>
         </div>
-        <p class="excuse-text" id="excuseText">Clicca "Genera Scusa" per trovare la scusa perfetta...</p>
-        <p class="cat-reaction" id="catReaction"></p>
-        <div class="card-actions">
-          <button class="action-btn copy-btn" id="copyBtn">&#x1F4CB; Copia</button>
-          <button class="action-btn wa-btn" id="waBtn">&#x1F4AC; WhatsApp</button>
+        <div class="slot-progress" id="slotProgress">
+          <div class="slot-progress-bar" id="slotProgressBar"></div>
         </div>
       </div>
-    </div>
 
-    <div class="cat-photo-section" id="catPhotoSection">
-      <div class="cat-photo-frame">
-        <div class="cat-photo-loading" id="catPhotoLoading">&#x1F431;</div>
-        <img class="cat-photo" id="catPhoto" src="" alt="Gatto giudice" />
-        <p class="cat-photo-caption">Il giudice supremo valuta la tua scusa</p>
+      <div class="final-response" id="finalResponse">
+        <div class="response-top-deco">&#10022; &#10022; &#10022;</div>
+        <div class="response-emoji-big" id="bigEmoji"></div>
+        <div class="response-badge" id="responseBadge"></div>
+        <blockquote class="response-quote" id="responseQuote"></blockquote>
+        <div class="oracle-cursor" id="oracleCursor"></div>
+        <p class="oracle-seal">&#8212; L'Oracolo ha parlato. Non si discute. &#8212;</p>
+        <button id="retryBtn" class="retry-btn">&#x1F504; Fai un'altra domanda inutile</button>
+        <div class="response-bottom-deco">&#10022; &#10022; &#10022;</div>
       </div>
-    </div>
 
-    <div class="cat-fact-card">
-      <span class="fact-icon">&#x1F4A1;</span>
-      <div>
-        <p class="fact-label">Fatto Felino del Momento</p>
-        <p class="fact-text" id="catFactText">Caricamento saggezza felina...</p>
-      </div>
-    </div>
+    </section>
 
     <footer class="footer">
-      <p>Fatto con &#x1F43E; e zero vergogna &#8212; usare responsabilmente</p>
+      <p>Sviluppato con zero utilita' pratica &#8212; L'Oracolo non si assume responsabilita' per scelte sbagliate</p>
     </footer>
 
-  </main>
+  </div>
 
-  <div class="toast" id="toast"></div>
+  <!-- Popup offesa dell'Oracolo -->
+  <div class="insult-overlay" id="insultOverlay">
+    <div class="insult-modal" id="insultModal">
+      <div class="insult-emoji" id="insultEmoji">&#x1F624;</div>
+      <p class="insult-text" id="insultText"></p>
+      <button class="insult-close" id="insultClose">Ok ok, scusa... vado avanti</button>
+    </div>
+  </div>
 
   <script src="script.js"></script>
 </body>
