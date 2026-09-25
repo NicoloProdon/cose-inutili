@@ -573,7 +573,10 @@ const Oracle = {
   },
 
   _startIdleTimer() {
-    this.idleTimer = setTimeout(() => this._triggerIdle(), this.IDLE_MS);
+    clearTimeout(this.idleTimer);
+    if (!this.running) {
+      this.idleTimer = setTimeout(() => this._triggerIdle(), this.IDLE_MS);
+    }
   },
 
   _resetIdleTimer() {
@@ -623,7 +626,7 @@ const Oracle = {
 
   _startWanderer() {
     const img = document.getElementById('idleWanderer');
-    const size = 140;
+    const size = 220;
     const randPos = () => ({
       x: Math.random() * Math.max(0, window.innerWidth  - size),
       y: Math.random() * Math.max(0, window.innerHeight - size),
@@ -743,12 +746,24 @@ const Oracle = {
       el.style.animation = '';
     });
 
-    // Suono
+    // Suono breve di avviso
     try { SoundEngine.sounds.offesa(); } catch (e) { /* audio non disponibile */ }
+
+    // Clip audio Vannacci: secondi 17-21
+    const clip = new Audio('audio/AudioCleaner_Download_Vannacci_ \u00ABGonna corta o gonna lunga_ Una donna la preferisco sempre senza gonna\u00BB.mp3');
+    clip.volume = 0.9;
+    clip.currentTime = 17;
+    let clipTimer = null;
+    setTimeout(() => {
+      clip.play().catch(() => {});
+      clipTimer = setTimeout(() => { clip.pause(); }, 4000); // 17→21 = 4 secondi
+    }, 350); // leggero delay dopo il buzzer
 
     overlay.classList.add('active');
 
     const close = () => {
+      clip.pause();
+      clearTimeout(clipTimer);
       overlay.classList.remove('active');
       closeBtn.removeEventListener('click', close);
       callback();
